@@ -1,6 +1,8 @@
 import streamlit as st
 import streamlit.components.v1 as components
 import json
+import base64
+from pathlib import Path
 
 # =========================
 # 🌿 HerbCare AI
@@ -23,6 +25,7 @@ st.markdown("""
     background: linear-gradient(135deg, #f4fff7, #fffdf2);
 }
 
+/* หัวเว็บ */
 .main-title {
     text-align: center;
     color: #4f8060;
@@ -38,6 +41,7 @@ st.markdown("""
     margin-bottom: 30px;
 }
 
+/* กล่อง */
 .card {
     background-color: white;
     padding: 25px;
@@ -46,27 +50,64 @@ st.markdown("""
     margin-bottom: 20px;
 }
 
-.character {
+/* 🌿 Animation น้องใบชา */
+.baicha-wrap {
     text-align: center;
-    font-size: 90px;
+    padding: 10px;
 }
 
-.character-name {
-    text-align: center;
+.baicha-img {
+    width: 330px;
+    max-width: 90%;
+    animation: baichaFloat 3s ease-in-out infinite;
+    filter: drop-shadow(0px 10px 12px rgba(80,120,80,0.15));
+}
+
+@keyframes baichaFloat {
+
+    0% {
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-12px) rotate(1deg);
+    }
+
+    100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+}
+
+.baicha-name {
     color: #5d896a;
-    font-size: 25px;
+    font-size: 27px;
     font-weight: bold;
+    margin-top: 8px;
 }
 
 .speech {
+    display: inline-block;
     background-color: #f1faef;
     border-radius: 20px;
-    padding: 18px;
-    font-size: 18px;
+    padding: 15px 22px;
+    font-size: 17px;
     color: #42634b;
-    text-align: center;
+    margin-top: 10px;
+    animation: speechFloat 2.5s ease-in-out infinite;
 }
 
+@keyframes speechFloat {
+
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.03);
+    }
+}
+
+/* ผลลัพธ์ */
 .result {
     background-color: #f7fff5;
     border-left: 6px solid #79ad83;
@@ -96,14 +137,14 @@ st.markdown(
 
 
 # =========================
-# 🍵 Tea Formula
+# 🍵 สูตรชา
 # =========================
 
 tea = "ชาใบเขียวดาวเรืองผสมใบหม่อน"
 
 
 # =========================
-# 👤 User Information
+# 👤 ข้อมูลผู้ใช้
 # =========================
 
 col1, col2 = st.columns(2)
@@ -168,23 +209,43 @@ with col2:
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
 
-    st.markdown(
-        '<div class="character">🌿👧🏻🍵</div>',
-        unsafe_allow_html=True
-    )
+    mascot_path = Path("nong_baicha_mascot.png")
 
-    st.markdown(
-        '<div class="character-name">น้องใบชา 🌱</div>',
-        unsafe_allow_html=True
-    )
+    if mascot_path.exists():
 
-    st.markdown(
-        '<div class="speech">'
-        'สวัสดีค่ะ 💚 น้องใบชาจะช่วยดูข้อมูลเบื้องต้น '
-        'และแนะนำการดื่มชาให้เหมาะสมค่ะ 🍵'
-        '</div>',
-        unsafe_allow_html=True
-    )
+        image_data = base64.b64encode(
+            mascot_path.read_bytes()
+        ).decode()
+
+        st.markdown(
+            f"""
+            <div class="baicha-wrap">
+
+                <img
+                    class="baicha-img"
+                    src="data:image/png;base64,{image_data}"
+                >
+
+                <div class="baicha-name">
+                    น้องใบชา 🌱
+                </div>
+
+                <div class="speech">
+                    สวัสดีค่ะ 💚<br>
+                    วันนี้มาดูแลตัวเองไปด้วยกันนะคะ 🍵✨
+                </div>
+
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    else:
+
+        st.warning(
+            "⚠️ ไม่พบไฟล์ nong_baicha_mascot.png "
+            "กรุณาใส่ไฟล์ไว้ในโฟลเดอร์เดียวกับ app.py"
+        )
 
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -232,7 +293,8 @@ if completed >= target:
         "เก่งมากเลยค่ะ วันนี้เธอดื่มชาสมุนไพรครบตามเป้าหมายแล้ว "
         "น้องใบชาภูมิใจในตัวเธอมาก ๆ เลยค่ะ "
         "ค่อย ๆ ดูแลตัวเองแบบนี้ต่อไปนะคะ "
-        "ไม่ต้องกดดันตัวเอง แค่ทำได้อย่างสม่ำเสมอก็เก่งมากแล้วค่ะ"
+        "ไม่ต้องกดดันตัวเอง แค่ทำได้อย่างสม่ำเสมอ "
+        "ก็เก่งมากแล้วค่ะ"
     )
 
     speech_json = json.dumps(
@@ -240,7 +302,6 @@ if completed >= target:
         ensure_ascii=False
     )
 
-    # 🔊 เสียงน้องใบชาแบบน่ารักสมวัย
     components.html(
         """
         <script>
@@ -255,13 +316,16 @@ if completed >= target:
 
             window.speechSynthesis.cancel();
 
-            const voices = window.speechSynthesis.getVoices();
+            const voices =
+                window.speechSynthesis.getVoices();
 
             let thaiVoice = voices.find(
-                voice => voice.lang.toLowerCase().startsWith("th")
+                voice =>
+                voice.lang.toLowerCase().startsWith("th")
             );
 
-            const msg = new SpeechSynthesisUtterance(text);
+            const msg =
+                new SpeechSynthesisUtterance(text);
 
             if (thaiVoice) {
                 msg.voice = thaiVoice;
@@ -269,7 +333,7 @@ if completed >= target:
 
             msg.lang = "th-TH";
 
-            // 🌸 สาววัยเรียน น่ารัก สดใส ไม่เด็กเกินไป
+            /* 🌸 เสียงสาววัยเรียน น่ารักสมวัย */
             msg.rate = 0.90;
             msg.pitch = 1.25;
             msg.volume = 1.0;
@@ -277,16 +341,20 @@ if completed >= target:
             window.speechSynthesis.speak(msg);
         }
 
-        if (window.speechSynthesis.getVoices().length > 0) {
+        if (
+            window.speechSynthesis.getVoices().length > 0
+        ) {
             speakBaicha();
         } else {
-            window.speechSynthesis.onvoiceschanged = speakBaicha;
+            window.speechSynthesis.onvoiceschanged =
+                speakBaicha;
         }
 
         </script>
         """ % speech_json,
         height=0
     )
+
 
 elif completed > 0:
 
@@ -299,21 +367,24 @@ elif completed > 0:
         f"ค่อย ๆ ทำไป ไม่ต้องรีบค่ะ ✨"
     )
 
+
 else:
 
     st.info(
-        "🌿 วันนี้มาเริ่มดูแลตัวเองไปพร้อมกับน้องใบชากันนะคะ 💚 "
-        "ค่อย ๆ ทำตามเป้าหมายที่ตั้งไว้ ไม่ต้องกดดันตัวเองค่ะ 🍵✨"
+        "🌿 วันนี้มาเริ่มดูแลตัวเองไปพร้อมกับน้องใบชา "
+        "กันนะคะ 💚 ค่อย ๆ ทำตามเป้าหมายที่ตั้งไว้ "
+        "ไม่ต้องกดดันตัวเองค่ะ 🍵✨"
     )
 
 st.markdown("</div>", unsafe_allow_html=True)
 
 
 # =========================
-# 🧮 คำนวณ BMI
+# 🧮 BMI
 # =========================
 
 height_m = height / 100
+
 bmi = weight / (height_m ** 2)
 
 
@@ -360,17 +431,18 @@ else:
 # =========================
 
 tea_info = {
-    "name": "ชาใบเขียวดาวเรืองผสมใบหม่อน",
 
-    "description": (
-        "ชาสมุนไพรสูตรผสมใบเขียวดาวเรืองและใบหม่อน "
-        "สำหรับใช้เป็นเครื่องดื่มในชีวิตประจำวัน"
-    ),
+    "name":
+        "ชาใบเขียวดาวเรืองผสมใบหม่อน",
 
-    "advice": (
+    "description":
+        "ชาสมุนไพรสูตรผสมใบเขียวดาวเรือง "
+        "และใบหม่อน สำหรับใช้เป็นเครื่องดื่ม "
+        "ในชีวิตประจำวัน",
+
+    "advice":
         "ควรดื่มโดยไม่เติมน้ำตาลหรือน้ำเชื่อม "
         "และไม่ควรใช้ชาแทนยาที่แพทย์สั่ง"
-    )
 }
 
 
@@ -450,29 +522,4 @@ if st.button(
         message = (
             "ถ้าเป็นเบาหวาน แนะนำเลือกดื่มแบบไม่เติมน้ำตาล "
             "และติดตามระดับน้ำตาลตามคำแนะนำ "
-            "ของบุคลากรทางการแพทย์นะคะ 🌿"
-        )
-
-    else:
-
-        message = (
-            "ค่อย ๆ ดูแลตัวเองอย่างสม่ำเสมอนะคะ 💚 "
-            "เลือกดื่มแบบไม่เติมน้ำตาล "
-            "และสังเกตการตอบสนองของร่างกายค่ะ 🍵"
-        )
-
-    st.info("🌱 " + message)
-
-
-# =========================
-# ⚠️ Disclaimer
-# =========================
-
-st.markdown("</div>", unsafe_allow_html=True)
-
-st.caption(
-    "⚠️ HerbCare AI เป็นต้นแบบเพื่อการศึกษาและให้ข้อมูลเบื้องต้น "
-    "คำแนะนำในระบบไม่ใช่การวินิจฉัยหรือคำสั่งการรักษา "
-    "ผู้ที่มีโรคประจำตัวหรือใช้ยาควรปรึกษาแพทย์หรือเภสัชกร "
-    "ก่อนใช้สมุนไพรเป็นประจำ"
-)
+            "ของ
