@@ -33,7 +33,30 @@ st.markdown("""
     text-align: center;
     color: #777;
     font-size: 17px;
-    margin-bottom: 30px;
+    margin-bottom: 15px;
+}
+
+.character-box {
+    background: white;
+    padding: 18px;
+    border-radius: 25px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+    margin: 15px 0 25px 0;
+}
+
+.character {
+    font-size: 75px;
+    margin-bottom: 5px;
+}
+
+.speech {
+    background: #eefaf1;
+    border-radius: 18px;
+    padding: 12px;
+    color: #4d7c5b;
+    font-size: 17px;
+    font-weight: 600;
 }
 
 .card {
@@ -60,17 +83,11 @@ st.markdown("""
     margin-bottom: 10px;
 }
 
-.character {
-    text-align: center;
-    font-size: 80px;
-    margin: 10px;
-}
-
 </style>
 """, unsafe_allow_html=True)
 
 # =========================
-# TITLE
+# HEADER
 # =========================
 
 st.markdown(
@@ -83,10 +100,26 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown(
-    '<div class="character">🌿🧑‍🌾🍵</div>',
-    unsafe_allow_html=True
-)
+# =========================
+# HERB CHARACTER
+# =========================
+
+st.markdown("""
+<div class="character-box">
+
+<div class="character">
+🌿<br>
+(｡•ᴗ•｡)<br>
+🍵
+</div>
+
+<div class="speech">
+💚 สวัสดีค่ะ! ฉันคือน้องใบชา<br>
+มาช่วยดูข้อมูลชาสมุนไพรให้กันนะคะ 🌱
+</div>
+
+</div>
+""", unsafe_allow_html=True)
 
 st.info(
     "💚 ระบบนี้เป็นเครื่องมือให้ข้อมูลเบื้องต้น "
@@ -194,7 +227,7 @@ tea = st.selectbox(
 )
 
 # =========================
-# AI RECOMMENDATION
+# ANALYSIS
 # =========================
 
 if st.button("🌿 วิเคราะห์คำแนะนำ", use_container_width=True):
@@ -242,12 +275,15 @@ if st.button("🌿 วิเคราะห์คำแนะนำ", use_contai
             "ระหว่างยาและสมุนไพรกับบุคลากรทางการแพทย์"
         )
 
-    # Tea recommendations
+    # =========================
+    # TEA RECOMMENDATIONS
+    # =========================
+
     if tea == "ชาอบเชย":
 
         recommendations.append(
-            "ชาอบเชยอาจดื่มเป็นเครื่องดื่มได้ แต่ยังไม่มีหลักฐานเพียงพอ "
-            "ที่จะใช้แทนการรักษาเบาหวาน"
+            "ชาอบเชยอาจดื่มเป็นเครื่องดื่มได้ "
+            "แต่ยังไม่มีหลักฐานเพียงพอที่จะใช้แทนการรักษาเบาหวาน"
         )
 
         if "โรคตับ" in diseases:
@@ -345,18 +381,20 @@ if st.button("🌿 วิเคราะห์คำแนะนำ", use_contai
         )
 
     # =========================
-    # VOICE
+    # HERB CHARACTER SPEECH
     # =========================
 
-    voice_text = (
-        "สวัสดีค่ะ นี่คือคำแนะนำเบื้องต้นจาก HerbCare AI "
-        "กรุณาเลือกชาสมุนไพรที่ไม่เติมน้ำตาล "
-        "และอย่าใช้ชาสมุนไพรแทนยารักษาเบาหวาน "
-        "หากกำลังรับประทานยา หรือมีโรคประจำตัวอื่น "
-        "ควรปรึกษาแพทย์หรือเภสัชกรก่อนค่ะ"
-    )
+    st.markdown("### 🌿 น้องใบชาพูดให้ฟัง")
 
-    st.markdown("### 🔊 ฟังคำแนะนำ")
+    speech_text = (
+        f"สวัสดีค่ะ ฉันคือน้องใบชา "
+        f"จาก HerbCare AI ค่ะ "
+        f"วันนี้คุณเลือก {tea} "
+        f"คำแนะนำคือ "
+        + " ".join(recommendations)
+        + " หากกำลังใช้ยา หรือมีโรคประจำตัว "
+        "ควรปรึกษาแพทย์หรือเภสัชกรก่อนนะคะ"
+    )
 
     st.components.v1.html(
         f"""
@@ -365,33 +403,50 @@ if st.button("🌿 วิเคราะห์คำแนะนำ", use_contai
             padding:20px;
             border-radius:20px;
             text-align:center;
+            box-shadow:0 5px 20px rgba(0,0,0,0.07);
         ">
+
+        <div style="font-size:65px;">
+        🌿<br>
+        (｡•ᴗ•｡)<br>
+        🍵
+        </div>
+
+        <p style="
+            color:#4d7c5b;
+            font-size:18px;
+            font-weight:bold;
+        ">
+        💬 น้องใบชากำลังพูด...
+        </p>
 
         <button onclick="speakText()" style="
             background:#75a878;
             color:white;
             border:none;
-            padding:12px 25px;
+            padding:13px 28px;
             border-radius:30px;
             font-size:18px;
             cursor:pointer;
         ">
-        🔊 อ่านคำแนะนำ
+        🔊 ให้น้องใบชาพูด
         </button>
 
         <script>
 
         function speakText() {{
 
-            const text = `{voice_text}`;
+            const text = `{speech_text}`;
 
-            const speech = new SpeechSynthesisUtterance(text);
+            const speech =
+                new SpeechSynthesisUtterance(text);
 
             speech.lang = "th-TH";
             speech.rate = 0.9;
-            speech.pitch = 1.1;
+            speech.pitch = 1.15;
 
             window.speechSynthesis.cancel();
+
             window.speechSynthesis.speak(speech);
         }}
 
@@ -399,7 +454,7 @@ if st.button("🌿 วิเคราะห์คำแนะนำ", use_contai
 
         </div>
         """,
-        height=100
+        height=300
     )
 
 # =========================
