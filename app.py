@@ -1,140 +1,117 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
-# =========================
-# PAGE CONFIG
-# =========================
+# ==================================================
+# CONFIG
+# ==================================================
 
 st.set_page_config(
     page_title="HerbCare AI 🌿",
     page_icon="🍵",
-    layout="centered"
+    layout="wide"
 )
 
-# =========================
-# STYLE
-# =========================
+# ==================================================
+# CSS
+# ==================================================
 
 st.markdown("""
 <style>
 
 .stApp {
-    background: linear-gradient(135deg, #fff8ed, #eefaf1);
+    background: linear-gradient(135deg, #fffaf0, #edf9ef);
 }
 
-.title {
-    text-align: center;
-    color: #4d7c5b;
-    font-size: 42px;
-    font-weight: 800;
-    margin-bottom: 0;
+.main-title {
+    text-align:center;
+    color:#347653;
+    font-size:44px;
+    font-weight:800;
+    margin-top:10px;
 }
 
 .subtitle {
-    text-align: center;
-    color: #777;
-    font-size: 17px;
-    margin-bottom: 15px;
+    text-align:center;
+    color:#6d806f;
+    font-size:18px;
+    margin-bottom:25px;
 }
 
-.character-box {
-    background: white;
-    padding: 18px;
-    border-radius: 25px;
-    text-align: center;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.07);
-    margin: 15px 0 25px 0;
+.box {
+    background:white;
+    border-radius:24px;
+    padding:24px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.07);
+    margin-bottom:20px;
 }
 
-.character {
-    font-size: 75px;
-    margin-bottom: 5px;
+.section-title {
+    color:#347653;
+    font-size:22px;
+    font-weight:700;
 }
 
-.speech {
-    background: #eefaf1;
-    border-radius: 18px;
-    padding: 12px;
-    color: #4d7c5b;
-    font-size: 17px;
-    font-weight: 600;
-}
-
-.card {
-    background: white;
-    padding: 22px;
-    border-radius: 22px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.07);
-    margin-bottom: 20px;
+.result {
+    background:#eff9f0;
+    border-left:6px solid #63a875;
+    padding:16px;
+    border-radius:15px;
+    margin:10px 0;
 }
 
 .warning {
-    background: #fff3cd;
-    padding: 15px;
-    border-radius: 15px;
-    border-left: 5px solid #e0a800;
-    margin-bottom: 10px;
+    background:#fff5d9;
+    border-left:6px solid #e8ae32;
+    padding:16px;
+    border-radius:15px;
+    margin:10px 0;
 }
 
-.safe {
-    background: #eaf7ed;
-    padding: 15px;
-    border-radius: 15px;
-    border-left: 5px solid #5b9b6d;
-    margin-bottom: 10px;
+.voice-box {
+    background:#f3faf4;
+    border-radius:20px;
+    padding:18px;
+    text-align:center;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# =========================
+# ==================================================
 # HEADER
-# =========================
+# ==================================================
 
 st.markdown(
-    '<div class="title">🌿 HerbCare AI 🍵</div>',
+    '<div class="main-title">🌿 HerbCare AI 🍵</div>',
     unsafe_allow_html=True
 )
 
 st.markdown(
-    '<div class="subtitle">ผู้ช่วยแนะนำชาสมุนไพรสำหรับผู้ป่วยเบาหวาน</div>',
+    '<div class="subtitle">'
+    'ผู้ช่วยแนะนำชาสมุนไพรสำหรับผู้ป่วยเบาหวาน'
+    '</div>',
     unsafe_allow_html=True
 )
 
-# =========================
-# HERB CHARACTER
-# =========================
+# ==================================================
+# LAYOUT
+# ==================================================
 
-st.markdown("""
-<div class="character-box">
+left, right = st.columns([0.9, 1.5], gap="large")
 
-<div class="character">
-🌿<br>
-(｡•ᴗ•｡)<br>
-🍵
-</div>
+# ==================================================
+# LEFT : USER DATA
+# ==================================================
 
-<div class="speech">
-💚 สวัสดีค่ะ! ฉันคือน้องใบชา<br>
-มาช่วยดูข้อมูลชาสมุนไพรให้กันนะคะ 🌱
-</div>
+with left:
 
-</div>
-""", unsafe_allow_html=True)
+    st.markdown('<div class="box">', unsafe_allow_html=True)
 
-st.info(
-    "💚 ระบบนี้เป็นเครื่องมือให้ข้อมูลเบื้องต้น "
-    "ไม่ใช่การวินิจฉัยหรือคำสั่งรักษาจากแพทย์"
-)
+    st.markdown(
+        '<div class="section-title">👤 ข้อมูลผู้ใช้งาน</div>',
+        unsafe_allow_html=True
+    )
 
-# =========================
-# USER INFORMATION
-# =========================
-
-st.markdown("### 👤 ข้อมูลผู้ใช้งาน")
-
-col1, col2 = st.columns(2)
-
-with col1:
     weight = st.number_input(
         "⚖️ น้ำหนัก (กิโลกรัม)",
         min_value=20.0,
@@ -143,7 +120,6 @@ with col1:
         step=0.5
     )
 
-with col2:
     height = st.number_input(
         "📏 ส่วนสูง (เซนติเมตร)",
         min_value=100.0,
@@ -152,85 +128,136 @@ with col2:
         step=1.0
     )
 
-age = st.number_input(
-    "🎂 อายุ",
-    min_value=1,
-    max_value=120,
-    value=40
-)
+    age = st.number_input(
+        "🎂 อายุ (ปี)",
+        min_value=1,
+        max_value=120,
+        value=40
+    )
 
-# =========================
-# BMI
-# =========================
+    # BMI
+    height_m = height / 100
+    bmi = weight / (height_m ** 2)
 
-height_m = height / 100
-bmi = weight / (height_m ** 2)
+    st.markdown(
+        f"""
+        <div style="
+            background:#edf8ed;
+            padding:15px;
+            border-radius:16px;
+            margin:15px 0;
+        ">
+        <b>📊 ข้อมูลร่างกาย</b><br>
+        BMI: <b>{bmi:.1f}</b>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-st.markdown(
-    f"""
-    <div class="card">
-        <h3>📊 ข้อมูลร่างกาย</h3>
-        <p><b>BMI:</b> {bmi:.1f}</p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+    # Diseases
+    st.markdown("### 🩺 โรคประจำตัว")
 
-# =========================
-# DISEASES
-# =========================
+    diseases = st.multiselect(
+        "เลือกโรคประจำตัว",
+        [
+            "เบาหวาน",
+            "ความดันโลหิตสูง",
+            "โรคไต",
+            "โรคตับ",
+            "โรคหัวใจ",
+            "ไขมันในเลือดสูง",
+            "ไม่มีโรคประจำตัวอื่น"
+        ]
+    )
 
-st.markdown("### 🩺 โรคประจำตัว")
+    # Medicine
+    st.markdown("### 💊 ยาที่ใช้อยู่")
 
-diseases = st.multiselect(
-    "เลือกโรคประจำตัวที่มี",
-    [
-        "เบาหวาน",
-        "ความดันโลหิตสูง",
-        "โรคไต",
-        "โรคตับ",
-        "โรคหัวใจ",
-        "ไขมันในเลือดสูง",
-        "ไม่มีโรคประจำตัวอื่น"
-    ]
-)
+    medication = st.text_input(
+        "ชื่อยา (ถ้าทราบ)",
+        placeholder="เช่น Metformin"
+    )
 
-# =========================
-# MEDICATION
-# =========================
+    # Tea
+    st.markdown("### 🍵 ชาสมุนไพรที่สนใจ")
 
-st.markdown("### 💊 ยาที่ใช้อยู่")
+    tea = st.selectbox(
+        "เลือกชา",
+        [
+            "ชาใบเชียงดา",
+            "ชาใบหม่อน",
+            "ชาเขียว",
+            "ชาขิง",
+            "ชาอบเชย",
+            "ชาคาโมมายล์",
+            "ชาตะไคร้",
+            "ยังไม่แน่ใจ"
+        ]
+    )
 
-medication = st.text_area(
-    "ระบุชื่อยา (ถ้าทราบ)",
-    placeholder="เช่น Metformin, ยาความดัน..."
-)
+    analyze = st.button(
+        "🌿 วิเคราะห์คำแนะนำ",
+        use_container_width=True
+    )
 
-# =========================
-# TEA
-# =========================
+    st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown("### 🍵 ชาสมุนไพรที่สนใจ")
 
-tea = st.selectbox(
-    "เลือกชา",
-    [
-        "ชาคาโมมายล์",
-        "ชาเขียว",
-        "ชาอบเชย",
-        "ชาขิง",
-        "ชาใบเชียงดา",
-        "ชาใบหม่อน",
-        "ชาตะไคร้",
-        "ยังไม่แน่ใจ"
-    ]
-)
+# ==================================================
+# RIGHT : NONG BAICHA
+# ==================================================
 
-# =========================
+with right:
+
+    st.markdown('<div class="box">', unsafe_allow_html=True)
+
+    # Character
+    try:
+        st.image(
+            "assets/nong_baicha.png",
+            use_container_width=True
+        )
+    except:
+        st.markdown(
+            """
+            <div style="
+                text-align:center;
+                font-size:100px;
+                padding:50px;
+            ">
+            🌿🍵
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    # Speech bubble
+    st.markdown(
+        """
+        <div style="
+            background:#eff9ef;
+            border-radius:22px;
+            padding:20px;
+            color:#397653;
+            font-size:19px;
+            font-weight:600;
+            text-align:center;
+        ">
+        💬 สวัสดีค่ะ! ฉันคือน้องใบชา 🌿<br>
+        มาช่วยดูข้อมูลชาสมุนไพรให้กันนะคะ 💚
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+# ==================================================
 # ANALYSIS
-# =========================
+# ==================================================
 
-if st.button("🌿 วิเคราะห์คำแนะนำ", use_container_width=True):
+if analyze:
 
     recommendations = []
     warnings = []
@@ -238,132 +265,112 @@ if st.button("🌿 วิเคราะห์คำแนะนำ", use_contai
     # BMI
     if bmi >= 30:
         recommendations.append(
-            "BMI อยู่ในช่วงที่ควรให้ความสำคัญกับการควบคุมน้ำหนัก "
-            "ควรเลือกเครื่องดื่มที่ไม่เติมน้ำตาล"
+            "BMI ค่อนข้างสูง ควรเลือกเครื่องดื่มที่ไม่เติมน้ำตาล "
+            "และควบคุมอาหารร่วมด้วย"
         )
 
     elif bmi >= 25:
         recommendations.append(
-            "BMI ค่อนข้างสูง ควรเน้นเครื่องดื่มไม่หวาน "
-            "และควบคุมปริมาณอาหารร่วมด้วย"
+            "BMI อยู่ในช่วงค่อนข้างสูง ควรเลือกเครื่องดื่มไม่หวาน"
         )
 
     else:
         recommendations.append(
-            "BMI ไม่ได้อยู่ในช่วงสูงตามเกณฑ์ทั่วไป "
-            "แต่ควรพิจารณาร่วมกับระดับน้ำตาลและสุขภาพโดยรวม"
+            "ควรดูแลน้ำหนักและสุขภาพโดยรวมร่วมกับระดับน้ำตาลในเลือด"
         )
 
-    # Kidney
-    if "โรคไต" in diseases:
-        warnings.append(
-            "⚠️ หากมีโรคไต ควรปรึกษาแพทย์หรือเภสัชกรก่อนใช้ "
-            "สมุนไพรหรือผลิตภัณฑ์เสริมอาหาร"
-        )
-
-    # Liver
-    if "โรคตับ" in diseases:
-        warnings.append(
-            "⚠️ หากมีโรคตับ ควรหลีกเลี่ยงการใช้สมุนไพรเข้มข้น "
-            "โดยไม่ปรึกษาผู้เชี่ยวชาญ"
-        )
-
-    # Blood pressure
-    if "ความดันโลหิตสูง" in diseases:
-        warnings.append(
-            "⚠️ หากใช้ยาความดัน ควรตรวจสอบการเกิดปฏิกิริยา "
-            "ระหว่างยาและสมุนไพรกับบุคลากรทางการแพทย์"
-        )
-
-    # =========================
-    # TEA RECOMMENDATIONS
-    # =========================
-
-    if tea == "ชาอบเชย":
-
-        recommendations.append(
-            "ชาอบเชยอาจดื่มเป็นเครื่องดื่มได้ "
-            "แต่ยังไม่มีหลักฐานเพียงพอที่จะใช้แทนการรักษาเบาหวาน"
-        )
-
-        if "โรคตับ" in diseases:
-            warnings.append(
-                "⚠️ หากมีโรคตับ ควรระวังการบริโภคอบเชยปริมาณมาก "
-                "โดยเฉพาะชนิด Cassia"
-            )
-
-    elif tea == "ชาเขียว":
-
-        recommendations.append(
-            "ชาเขียวแบบไม่เติมน้ำตาลสามารถเป็นทางเลือกของเครื่องดื่มได้ "
-            "แต่ควรระวังผลิตภัณฑ์สารสกัดชาเขียวเข้มข้น"
-        )
-
-    elif tea == "ชาคาโมมายล์":
-
-        recommendations.append(
-            "คาโมมายล์สามารถใช้เป็นเครื่องดื่มได้ในบางคน "
-            "แต่หากใช้ยาหลายชนิดควรตรวจสอบการโต้ตอบกับยาก่อน"
-        )
-
-    elif tea == "ชาขิง":
-
-        recommendations.append(
-            "ชาขิงแบบไม่เติมน้ำตาลสามารถใช้เป็นเครื่องดื่มได้ "
-            "แต่ไม่ควรใช้แทนการรักษาเบาหวาน"
-        )
-
-    elif tea == "ชาใบเชียงดา":
+    # Tea
+    if tea == "ชาใบเชียงดา":
 
         recommendations.append(
             "ชาใบเชียงดาสามารถดื่มเป็นเครื่องดื่มสมุนไพรได้ "
-            "แต่หลักฐานเกี่ยวกับผลต่อระดับน้ำตาลในเลือดยังมีข้อจำกัด "
-            "จึงไม่ควรใช้แทนยาหรือการรักษาเบาหวาน"
+            "แต่ยังไม่ควรใช้แทนยา หรือการรักษาโรคเบาหวาน"
         )
 
     elif tea == "ชาใบหม่อน":
 
         recommendations.append(
             "ชาใบหม่อนสามารถดื่มเป็นเครื่องดื่มสมุนไพรได้ "
-            "แต่หลักฐานเกี่ยวกับการควบคุมระดับน้ำตาลยังมีข้อจำกัด "
-            "จึงไม่ควรใช้แทนยาหรือการรักษาเบาหวาน"
+            "แต่หลักฐานเกี่ยวกับการควบคุมระดับน้ำตาลยังมีข้อจำกัด"
+        )
+
+    elif tea == "ชาเขียว":
+
+        recommendations.append(
+            "ชาเขียวที่ไม่เติมน้ำตาลสามารถเป็นทางเลือกของเครื่องดื่มได้"
+        )
+
+    elif tea == "ชาขิง":
+
+        recommendations.append(
+            "ชาขิงแบบไม่เติมน้ำตาลสามารถดื่มเป็นเครื่องดื่มได้ "
+            "แต่ไม่ควรใช้แทนการรักษาเบาหวาน"
+        )
+
+    elif tea == "ชาอบเชย":
+
+        recommendations.append(
+            "ชาอบเชยสามารถดื่มเป็นเครื่องดื่มได้ "
+            "แต่ยังไม่มีหลักฐานเพียงพอที่จะใช้แทนการรักษาเบาหวาน"
+        )
+
+    elif tea == "ชาคาโมมายล์":
+
+        recommendations.append(
+            "คาโมมายล์สามารถดื่มเป็นเครื่องดื่มได้ "
+            "หากใช้ยาหลายชนิดควรตรวจสอบการโต้ตอบกับยาก่อน"
         )
 
     elif tea == "ชาตะไคร้":
 
         recommendations.append(
-            "สามารถพิจารณาเป็นเครื่องดื่มสมุนไพรที่ไม่เติมน้ำตาลได้ "
-            "แต่ไม่ควรกล่าวอ้างว่าสามารถรักษาเบาหวาน"
+            "สามารถเลือกเป็นเครื่องดื่มสมุนไพรแบบไม่เติมน้ำตาลได้"
         )
 
     else:
 
         recommendations.append(
-            "หากยังไม่แน่ใจเกี่ยวกับชนิดชา ควรเลือกเครื่องดื่ม "
-            "ที่ไม่เติมน้ำตาล และตรวจสอบกับบุคลากรทางการแพทย์ก่อน"
+            "หากยังไม่แน่ใจ ควรเลือกเครื่องดื่มที่ไม่เติมน้ำตาล "
+            "และปรึกษาแพทย์หรือเภสัชกรก่อนใช้สมุนไพร"
+        )
+
+    # Kidney
+    if "โรคไต" in diseases:
+
+        warnings.append(
+            "หากมีโรคไต ควรปรึกษาแพทย์หรือเภสัชกร "
+            "ก่อนใช้สมุนไพรเป็นประจำ"
+        )
+
+    # Liver
+    if "โรคตับ" in diseases:
+
+        warnings.append(
+            "หากมีโรคตับ ควรหลีกเลี่ยงการใช้สมุนไพรเข้มข้น "
+            "โดยไม่ปรึกษาผู้เชี่ยวชาญ"
         )
 
     # Medication
     if medication.strip():
 
         warnings.append(
-            "💊 เนื่องจากคุณระบุว่ากำลังใช้ยาอยู่ "
-            "ระบบไม่สามารถยืนยันความปลอดภัยของสมุนไพรกับยาทุกชนิดได้ "
-            "ควรนำรายชื่อยาให้แพทย์หรือเภสัชกรตรวจสอบ"
+            f"คุณระบุว่ากำลังใช้ยา {medication} "
+            "ควรให้แพทย์หรือเภสัชกรตรวจสอบการใช้ร่วมกับสมุนไพร"
         )
 
-    # =========================
+    # ==================================================
     # RESULT
-    # =========================
+    # ==================================================
 
-    st.markdown("## 💚 ผลการวิเคราะห์")
+    st.markdown("## 📊 ผลการวิเคราะห์")
 
-    for item in recommendations:
+    for rec in recommendations:
 
         st.markdown(
             f"""
-            <div class="safe">
-                🌱 {item}
+            <div class="result">
+            🌱 <b>คำแนะนำ</b><br>
+            {rec}
             </div>
             """,
             unsafe_allow_html=True
@@ -374,100 +381,83 @@ if st.button("🌿 วิเคราะห์คำแนะนำ", use_contai
         st.markdown(
             f"""
             <div class="warning">
-                {warning}
+            ⚠️ <b>ข้อควรระวัง</b><br>
+            {warning}
             </div>
             """,
             unsafe_allow_html=True
         )
 
-    # =========================
-    # HERB CHARACTER SPEECH
-    # =========================
+    # ==================================================
+    # VOICE
+    # ==================================================
 
-    st.markdown("### 🌿 น้องใบชาพูดให้ฟัง")
-
-    speech_text = (
+    speech = (
         f"สวัสดีค่ะ ฉันคือน้องใบชา "
-        f"จาก HerbCare AI ค่ะ "
         f"วันนี้คุณเลือก {tea} "
         f"คำแนะนำคือ "
         + " ".join(recommendations)
-        + " หากกำลังใช้ยา หรือมีโรคประจำตัว "
+        + " "
+        "หากกำลังใช้ยา หรือมีโรคประจำตัว "
         "ควรปรึกษาแพทย์หรือเภสัชกรก่อนนะคะ"
     )
 
-    st.components.v1.html(
+    st.markdown("## 🔊 น้องใบชาพูดให้ฟัง")
+
+    # Escape characters for JavaScript
+    safe_speech = (
+        speech
+        .replace("\\", "\\\\")
+        .replace("`", "\\`")
+        .replace("${", "\\${")
+    )
+
+    components.html(
         f"""
-        <div style="
-            background:#ffffff;
-            padding:20px;
-            border-radius:20px;
-            text-align:center;
-            box-shadow:0 5px 20px rgba(0,0,0,0.07);
-        ">
+        <div class="voice-box">
 
-        <div style="font-size:65px;">
-        🌿<br>
-        (｡•ᴗ•｡)<br>
-        🍵
-        </div>
+            <div style="
+                font-size:20px;
+                color:#397653;
+                font-weight:bold;
+                margin-bottom:15px;
+            ">
+            🌿 💬 น้องใบชาพร้อมพูดแล้ว!
+            </div>
 
-        <p style="
-            color:#4d7c5b;
-            font-size:18px;
-            font-weight:bold;
-        ">
-        💬 น้องใบชากำลังพูด...
-        </p>
+            <button onclick="speakText()" style="
+                background:#4d9863;
+                color:white;
+                border:none;
+                padding:14px 30px;
+                border-radius:30px;
+                font-size:18px;
+                font-weight:bold;
+                cursor:pointer;
+            ">
+            🔊 ให้น้องใบชาพูด
+            </button>
 
-        <button onclick="speakText()" style="
-            background:#75a878;
-            color:white;
-            border:none;
-            padding:13px 28px;
-            border-radius:30px;
-            font-size:18px;
-            cursor:pointer;
-        ">
-        🔊 ให้น้องใบชาพูด
-        </button>
+            <script>
 
-        <script>
+            function speakText() {{
 
-        function speakText() {{
+                const text = `{safe_speech}`;
 
-            const text = `{speech_text}`;
+                window.speechSynthesis.cancel();
 
-            const speech =
-                new SpeechSynthesisUtterance(text);
+                const speech =
+                    new SpeechSynthesisUtterance(text);
 
-            speech.lang = "th-TH";
-            speech.rate = 0.9;
-            speech.pitch = 1.15;
+                speech.lang = "th-TH";
+                speech.rate = 0.9;
+                speech.pitch = 1.15;
 
-            window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(speech);
+            }}
 
-            window.speechSynthesis.speak(speech);
-        }}
-
-        </script>
+            </script>
 
         </div>
         """,
-        height=300
-    )
-
-# =========================
-# FOOTER
-# =========================
-
-st.markdown("---")
-
-st.caption(
-    "🌿 HerbCare AI | Educational prototype "
-    "สำหรับการให้ข้อมูลเบื้องต้นเกี่ยวกับชาสมุนไพร"
-)
-
-st.caption(
-    "⚠️ ไม่ใช่เครื่องมือวินิจฉัยโรค และไม่ควรใช้แทนคำแนะนำจากแพทย์"
-)
+  
