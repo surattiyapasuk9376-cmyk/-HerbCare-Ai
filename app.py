@@ -415,3 +415,4 @@ st.caption(
 st.caption(
     "⚠️ ไม่ใช่เครื่องมือวินิจฉัยโรค และไม่ควรใช้แทนคำแนะนำจากแพทย์"
 )
+streamlit.components.v1 as components
