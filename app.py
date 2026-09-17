@@ -2,161 +2,187 @@ import streamlit as st
 import streamlit.components.v1 as components
 import json
 
+# =========================
+# 🌿 HerbCare AI
+# =========================
+
 st.set_page_config(
-    page_title="HerbCare AI",
+    page_title="HerbCare AI 🌿",
     page_icon="🌿",
     layout="wide"
 )
 
 # =========================
-# STYLE
+# 🎨 CSS
 # =========================
 
 st.markdown("""
 <style>
+
 .stApp {
-    background: linear-gradient(135deg, #f4fff5, #fffaf0);
+    background: linear-gradient(135deg, #f4fff7, #fffdf2);
 }
 
-.title {
+.main-title {
     text-align: center;
-    color: #397653;
-    font-size: 40px;
+    color: #4f8060;
+    font-size: 42px;
     font-weight: bold;
+    margin-bottom: 5px;
 }
 
 .subtitle {
     text-align: center;
-    color: #78917d;
-    font-size: 17px;
-    margin-bottom: 25px;
+    color: #777;
+    font-size: 18px;
+    margin-bottom: 30px;
 }
 
 .card {
-    background: white;
-    padding: 22px;
-    border-radius: 22px;
-    border: 2px solid #dcefdc;
-    margin-bottom: 18px;
+    background-color: white;
+    padding: 25px;
+    border-radius: 25px;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
 }
 
-.baicha {
+.character {
     text-align: center;
-    font-size: 80px;
-    padding: 15px;
+    font-size: 90px;
 }
+
+.character-name {
+    text-align: center;
+    color: #5d896a;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.speech {
+    background-color: #f1faef;
+    border-radius: 20px;
+    padding: 18px;
+    font-size: 18px;
+    color: #42634b;
+    text-align: center;
+}
+
+.result {
+    background-color: #f7fff5;
+    border-left: 6px solid #79ad83;
+    padding: 20px;
+    border-radius: 15px;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
+
 # =========================
-# HEADER
+# 🌿 Header
 # =========================
 
 st.markdown(
-    '<div class="title">🌿 HerbCare AI</div>',
+    '<div class="main-title">🌿 HerbCare AI 🍵</div>',
     unsafe_allow_html=True
 )
 
 st.markdown(
-    '<div class="subtitle">ผู้ช่วยแนะนำการดื่มชาสมุนไพรสำหรับผู้ที่เป็นเบาหวาน 💚</div>',
+    '<div class="subtitle">'
+    'ผู้ช่วยแนะนำการดื่มชาสมุนไพรเบื้องต้นสำหรับผู้ที่เป็นเบาหวาน'
+    '</div>',
     unsafe_allow_html=True
 )
 
+
 # =========================
-# INPUT
+# 🍵 Tea Formula
 # =========================
 
-left, right = st.columns(2)
+tea = "ชาใบเขียวดาวเรืองผสมใบหม่อน"
 
-with left:
+
+# =========================
+# 👤 User Information
+# =========================
+
+col1, col2 = st.columns(2)
+
+with col1:
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
 
     st.subheader("👤 ข้อมูลของคุณ")
 
     weight = st.number_input(
-        "⚖️ น้ำหนัก (กิโลกรัม)",
+        "น้ำหนัก (กิโลกรัม)",
         min_value=20.0,
-        max_value=300.0,
+        max_value=200.0,
         value=60.0,
         step=0.5
     )
 
     height = st.number_input(
-        "📏 ส่วนสูง (เซนติเมตร)",
+        "ส่วนสูง (เซนติเมตร)",
         min_value=100.0,
         max_value=220.0,
-        value=165.0,
+        value=160.0,
         step=1.0
     )
 
     age = st.number_input(
-        "🎂 อายุ",
-        min_value=1,
-        max_value=120,
-        value=18
+        "อายุ (ปี)",
+        min_value=10,
+        max_value=100,
+        value=18,
+        step=1
     )
 
-    diseases = st.multiselect(
-        "🩺 โรคประจำตัว",
+    disease = st.multiselect(
+        "โรคประจำตัว",
         [
             "เบาหวาน",
-            "โรคไต",
-            "โรคตับ",
             "ความดันโลหิตสูง",
+            "โรคไต",
             "โรคหัวใจ",
-            "ไม่มีโรคประจำตัวอื่น"
+            "ไม่มีโรคประจำตัว"
         ]
     )
 
     medicine_status = st.radio(
-        "💊 วันนี้รับประทานยาตามที่แพทย์สั่งแล้วหรือยัง?",
+        "วันนี้รับประทานยาตามที่แพทย์สั่งแล้วหรือยัง?",
         [
             "ยังไม่ได้รับประทานยา",
             "รับประทานยาแล้ว"
         ]
     )
 
-    medication = st.text_input(
-        "ชื่อยาที่กำลังรับประทาน (ถ้ามี)"
-    )
-
-    tea = st.selectbox(
-        "🍵 เลือกชาสมุนไพร",
-        [
-            "ชาหญ้าหวาน",
-            "ชาใบหม่อน",
-            "ชาอบเชย",
-            "ชาขิง",
-            "ชาเขียว"
-        ]
-    )
-
     st.markdown("</div>", unsafe_allow_html=True)
 
 
 # =========================
-# BAICHA
+# 🌱 น้องใบชา
 # =========================
 
-with right:
+with col2:
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
 
-    st.subheader("🌿 น้องใบชา")
-
     st.markdown(
-        '<div class="baicha">👧🏻🌿🍵</div>',
+        '<div class="character">🌿👧🏻🍵</div>',
         unsafe_allow_html=True
     )
 
     st.markdown(
-        '<p style="text-align:center;color:#397653;font-size:21px;font-weight:bold;">สวัสดีค่ะ~ ฉันคือน้องใบชา 💚</p>',
+        '<div class="character-name">น้องใบชา 🌱</div>',
         unsafe_allow_html=True
     )
 
     st.markdown(
-        '<p style="text-align:center;color:#78917d;">กรอกข้อมูล แล้วให้น้องใบชาช่วยวิเคราะห์กันนะคะ ✨</p>',
+        '<div class="speech">'
+        'สวัสดีค่ะ 💚 น้องใบชาจะช่วยดูข้อมูลเบื้องต้น '
+        'และแนะนำการดื่มชาให้เหมาะสมค่ะ 🍵'
+        '</div>',
         unsafe_allow_html=True
     )
 
@@ -164,268 +190,289 @@ with right:
 
 
 # =========================
-# BMI
+# 🎯 เป้าหมายการดื่มชา
 # =========================
 
-bmi = weight / ((height / 100) ** 2)
+st.markdown('<div class="card">', unsafe_allow_html=True)
 
-if bmi < 18.5:
-    bmi_status = "น้ำหนักน้อย"
-elif bmi < 23:
-    bmi_status = "อยู่ในเกณฑ์ปกติ"
-elif bmi < 25:
-    bmi_status = "น้ำหนักเกิน"
-elif bmi < 30:
-    bmi_status = "อ้วนระดับ 1"
+st.subheader("🎯 เป้าหมายการดื่มชาวันนี้")
+
+target = st.number_input(
+    "ตั้งเป้าหมายการดื่มชาวันนี้ (ครั้ง)",
+    min_value=1,
+    max_value=3,
+    value=1,
+    step=1
+)
+
+completed = st.number_input(
+    "วันนี้ดื่มชาไปแล้วกี่ครั้ง?",
+    min_value=0,
+    max_value=3,
+    value=0,
+    step=1
+)
+
+
+# =========================
+# 💚 ระบบให้กำลังใจ
+# =========================
+
+if completed >= target:
+
+    st.success(
+        "🎉🌿 เก่งมากเลยค่ะ! "
+        "วันนี้เธอดื่มชาสมุนไพรครบตามเป้าหมายแล้ว 💚🍵\n\n"
+        "น้องใบชาภูมิใจในตัวเธอมาก ๆ เลยค่ะ ✨ "
+        "ค่อย ๆ ดูแลตัวเองแบบนี้ต่อไปนะคะ "
+        "ไม่ต้องกดดันตัวเอง แค่ทำได้อย่างสม่ำเสมอก็เก่งมากแล้วค่ะ 🥰"
+    )
+
+    encouragement = (
+        "เก่งมากเลยค่ะ วันนี้เธอดื่มชาสมุนไพรครบตามเป้าหมายแล้ว "
+        "น้องใบชาภูมิใจในตัวเธอมาก ๆ เลยค่ะ "
+        "ค่อย ๆ ดูแลตัวเองแบบนี้ต่อไปนะคะ "
+        "ไม่ต้องกดดันตัวเอง แค่ทำได้อย่างสม่ำเสมอก็เก่งมากแล้วค่ะ"
+    )
+
+    speech_json = json.dumps(
+        encouragement,
+        ensure_ascii=False
+    )
+
+    # 🔊 เสียงน้องใบชาแบบน่ารักสมวัย
+    components.html(
+        """
+        <script>
+
+        const text = %s;
+
+        function speakBaicha() {
+
+            if (!("speechSynthesis" in window)) {
+                return;
+            }
+
+            window.speechSynthesis.cancel();
+
+            const voices = window.speechSynthesis.getVoices();
+
+            let thaiVoice = voices.find(
+                voice => voice.lang.toLowerCase().startsWith("th")
+            );
+
+            const msg = new SpeechSynthesisUtterance(text);
+
+            if (thaiVoice) {
+                msg.voice = thaiVoice;
+            }
+
+            msg.lang = "th-TH";
+
+            // 🌸 สาววัยเรียน น่ารัก สดใส ไม่เด็กเกินไป
+            msg.rate = 0.90;
+            msg.pitch = 1.25;
+            msg.volume = 1.0;
+
+            window.speechSynthesis.speak(msg);
+        }
+
+        if (window.speechSynthesis.getVoices().length > 0) {
+            speakBaicha();
+        } else {
+            window.speechSynthesis.onvoiceschanged = speakBaicha;
+        }
+
+        </script>
+        """ % speech_json,
+        height=0
+    )
+
+elif completed > 0:
+
+    remaining = target - completed
+
+    st.info(
+        f"🌱 อีกนิดเดียวเองค่ะ! "
+        f"วันนี้เหลืออีก {remaining} ครั้ง "
+        f"ก็จะครบเป้าหมายแล้วนะคะ 💚🍵 "
+        f"ค่อย ๆ ทำไป ไม่ต้องรีบค่ะ ✨"
+    )
+
 else:
-    bmi_status = "อ้วนระดับ 2 ขึ้นไป"
+
+    st.info(
+        "🌿 วันนี้มาเริ่มดูแลตัวเองไปพร้อมกับน้องใบชากันนะคะ 💚 "
+        "ค่อย ๆ ทำตามเป้าหมายที่ตั้งไว้ ไม่ต้องกดดันตัวเองค่ะ 🍵✨"
+    )
+
+st.markdown("</div>", unsafe_allow_html=True)
 
 
 # =========================
-# DRINK AMOUNT
+# 🧮 คำนวณ BMI
 # =========================
 
-if "โรคไต" in diseases:
+height_m = height / 100
+bmi = weight / (height_m ** 2)
 
-    drink_amount = 200
-    drink_times = "ควรปรึกษาแพทย์หรือเภสัชกรเรื่องความถี่"
 
-elif age < 18 or age >= 65:
+# =========================
+# 💧 ปริมาณตัวอย่าง
+# =========================
 
-    drink_amount = 200
-    drink_times = "วันละ 1 ครั้ง"
+if "โรคไต" in disease:
+
+    drink_amount = (
+        "ควรปรึกษาแพทย์หรือเภสัชกร "
+        "ก่อนกำหนดปริมาณการดื่ม"
+    )
+
+elif age < 18:
+
+    drink_amount = (
+        "ประมาณ 200 มล. ต่อครั้ง "
+        "และควรปรึกษาผู้ปกครองหรือบุคลากรทางการแพทย์"
+    )
+
+elif age >= 65:
+
+    drink_amount = (
+        "ประมาณ 200 มล. ต่อครั้ง "
+        "และควรสังเกตการตอบสนองของร่างกาย"
+    )
 
 elif bmi >= 30:
 
-    drink_amount = 200
-    drink_times = "วันละ 1–2 ครั้ง"
+    drink_amount = "ประมาณ 200 มล. ต่อครั้ง"
 
 elif bmi >= 25:
 
-    drink_amount = 250
-    drink_times = "วันละ 1 ครั้ง"
+    drink_amount = "ประมาณ 250 มล. ต่อครั้ง"
 
 else:
 
-    drink_amount = 250
-    drink_times = "วันละ 1–2 ครั้ง"
+    drink_amount = "ประมาณ 250 มล. ต่อครั้ง"
 
 
 # =========================
-# TEA INFO
+# 🌿 ข้อมูลชา
 # =========================
 
 tea_info = {
+    "name": "ชาใบเขียวดาวเรืองผสมใบหม่อน",
 
-    "ชาหญ้าหวาน":
-        "เลือกแบบไม่เติมน้ำตาล และตรวจสอบส่วนผสมว่าไม่มีน้ำตาลแฝง",
+    "description": (
+        "ชาสมุนไพรสูตรผสมใบเขียวดาวเรืองและใบหม่อน "
+        "สำหรับใช้เป็นเครื่องดื่มในชีวิตประจำวัน"
+    ),
 
-    "ชาใบหม่อน":
-        "เลือกดื่มแบบไม่เติมน้ำตาลได้",
-
-    "ชาอบเชย":
-        "ควรดื่มในปริมาณพอเหมาะ และหลีกเลี่ยงการเติมน้ำตาล",
-
-    "ชาขิง":
-        "สามารถดื่มแบบไม่เติมน้ำตาล และสังเกตการตอบสนองของร่างกาย",
-
-    "ชาเขียว":
-        "ควรเลือกสูตรไม่เติมน้ำตาล และระวังคาเฟอีนหากไวต่อคาเฟอีน"
+    "advice": (
+        "ควรดื่มโดยไม่เติมน้ำตาลหรือน้ำเชื่อม "
+        "และไม่ควรใช้ชาแทนยาที่แพทย์สั่ง"
+    )
 }
 
 
 # =========================
-# ANALYZE
+# 🔍 วิเคราะห์
 # =========================
 
+st.markdown('<div class="card">', unsafe_allow_html=True)
+
 if st.button(
-    "✨ วิเคราะห์โดยน้องใบชา ✨",
+    "🌿 วิเคราะห์คำแนะนำให้ฉัน",
     use_container_width=True
 ):
 
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.subheader("💚 ผลการวิเคราะห์เบื้องต้น")
 
-    st.subheader("🌿 ผลการวิเคราะห์เบื้องต้น")
+    st.markdown(
+        f"""
+        <div class="result">
 
-    st.write(
-        f"🍵 ชาที่เลือก: **{tea}**"
+        <h3>🍵 {tea_info["name"]}</h3>
+
+        <p>
+        <b>📏 BMI:</b> {bmi:.1f}
+        </p>
+
+        <p>
+        <b>💧 ปริมาณตัวอย่างต่อครั้ง:</b>
+        {drink_amount}
+        </p>
+
+        <p>
+        <b>🌿 คำแนะนำ:</b>
+        {tea_info["advice"]}
+        </p>
+
+        </div>
+        """,
+        unsafe_allow_html=True
     )
-
-    st.write(
-        f"📊 BMI: **{bmi:.1f}** — {bmi_status}"
-    )
-
-    st.markdown("### 🥤 ปริมาณชาที่แนะนำเบื้องต้น")
-
-    st.success(
-        f"ประมาณ **{drink_amount} มิลลิลิตรต่อครั้ง**"
-    )
-
-    st.info(
-        f"ความถี่: **{drink_times}**"
-    )
-
-    st.markdown("### 🌿 คำแนะนำ")
-
-    st.write(tea_info[tea])
 
 
     # =========================
-    # MEDICINE MESSAGE
+    # 💊 สถานะยา
     # =========================
 
     if medicine_status == "รับประทานยาแล้ว":
 
         st.success(
-            "🎉💚 ยินดีด้วยนะคะ! วันนี้คุณรับประทานยาตามที่แพทย์สั่งแล้ว "
+            "🎉💚 ยินดีด้วยนะคะ! "
+            "วันนี้คุณรับประทานยาตามที่แพทย์สั่งแล้ว "
             "เก่งมากเลยค่ะ ✨"
-        )
-
-        speech = (
-            f"เย้~! ยินดีด้วยนะคะ! "
-            f"วันนี้คุณรับประทานยาแล้ว "
-            f"เก่งมากเลยค่ะ~ "
-            f"น้องใบชาดีใจด้วยนะคะ! "
-            f"สำหรับ {tea} "
-            f"อย่าลืมเลือกแบบไม่เติมน้ำตาลนะคะ~"
         )
 
     else:
 
         st.warning(
             "💊 อย่าลืมรับประทานยาตามที่แพทย์สั่งนะคะ "
-            "หากลืมยา ไม่ควรเพิ่มขนาดยาเองค่ะ"
+            "ชาไม่สามารถใช้แทนยารักษาโรคได้ค่ะ 🌿"
         )
-
-        speech = (
-            "สวัสดีค่ะ~ ฉันคือน้องใบชานะคะ~ "
-            "วันนี้อย่าลืมรับประทานยาตามที่แพทย์สั่งนะคะ "
-            f"สำหรับ {tea} "
-            "อย่าลืมเลือกแบบไม่เติมน้ำตาลนะคะ~"
-        )
-
-
-    if "โรคไต" in diseases:
-
-        st.warning(
-            "⚠️ หากมีโรคไต ควรปรึกษาแพทย์หรือเภสัชกร "
-            "ก่อนกำหนดปริมาณและความถี่ในการดื่ม"
-        )
-
-
-    if medication.strip():
-
-        st.warning(
-            "💊 หากกำลังใช้ยา ควรตรวจสอบปฏิกิริยาระหว่าง "
-            "สมุนไพรกับยากับแพทย์หรือเภสัชกร"
-        )
-
-
-    st.markdown("</div>", unsafe_allow_html=True)
 
 
     # =========================
-    # VOICE
+    # 💬 ข้อความเฉพาะบุคคล
     # =========================
 
-    st.subheader("🔊 เสียงน้องใบชา")
+    if "โรคไต" in disease:
 
-    speech_json = json.dumps(
-        speech,
-        ensure_ascii=False
-    )
+        message = (
+            "เนื่องจากมีข้อมูลเกี่ยวกับโรคไต "
+            "ควรปรึกษาแพทย์หรือเภสัชกร "
+            "ก่อนดื่มเป็นประจำค่ะ 💚"
+        )
 
-    voice_html = """
-    <div style="
-        background:#f1fff3;
-        padding:22px;
-        border-radius:22px;
-        text-align:center;
-        border:2px solid #d9eedc;
-    ">
+    elif "เบาหวาน" in disease:
 
-    <div style="
-        font-size:21px;
-        color:#397653;
-        font-weight:bold;
-        margin-bottom:15px;
-    ">
-        🌿💚 น้องใบชาพร้อมพูดแล้ว! 💚🌿
-    </div>
+        message = (
+            "ถ้าเป็นเบาหวาน แนะนำเลือกดื่มแบบไม่เติมน้ำตาล "
+            "และติดตามระดับน้ำตาลตามคำแนะนำ "
+            "ของบุคลากรทางการแพทย์นะคะ 🌿"
+        )
 
-    <button id="speakButton" style="
-        background:#78b77e;
-        color:white;
-        border:0;
-        padding:14px 28px;
-        border-radius:30px;
-        font-size:18px;
-        font-weight:bold;
-        cursor:pointer;
-    ">
-        🔊✨ พูดให้ฟังหน่อยค่ะ
-    </button>
+    else:
 
-    <script>
+        message = (
+            "ค่อย ๆ ดูแลตัวเองอย่างสม่ำเสมอนะคะ 💚 "
+            "เลือกดื่มแบบไม่เติมน้ำตาล "
+            "และสังเกตการตอบสนองของร่างกายค่ะ 🍵"
+        )
 
-    const text = %s;
-
-    document
-    .getElementById("speakButton")
-    .addEventListener("click", function() {
-
-        window.speechSynthesis.cancel();
-
-        const message =
-            new SpeechSynthesisUtterance(text);
-
-        message.lang = "th-TH";
-        message.rate = 0.78;
-        message.pitch = 1.65;
-        message.volume = 1;
-
-        const voices =
-            window.speechSynthesis.getVoices();
-
-        const thaiVoice =
-            voices.find(
-                function(v) {
-                    return v.lang &&
-                    v.lang.toLowerCase() === "th-th";
-                }
-            );
-
-        if (thaiVoice) {
-            message.voice = thaiVoice;
-        }
-
-        window.speechSynthesis.speak(message);
-
-    });
-
-    </script>
-
-    </div>
-    """ % speech_json
-
-    components.html(
-        voice_html,
-        height=175
-    )
+    st.info("🌱 " + message)
 
 
 # =========================
-# DISCLAIMER
+# ⚠️ Disclaimer
 # =========================
 
-st.markdown("---")
+st.markdown("</div>", unsafe_allow_html=True)
 
 st.caption(
-    "⚠️ HerbCare AI เป็นโปรเจกต์เพื่อการศึกษา "
-    "คำแนะนำเป็นข้อมูลเบื้องต้น ไม่ใช่การวินิจฉัยหรือคำสั่งรักษา "
-    "ผู้ที่มีโรคประจำตัวหรือใช้ยาควรปรึกษาแพทย์หรือเภสัชกร"
-)
-
-st.caption(
-    "🌿 HerbCare AI — ดูแลสุขภาพด้วยความรู้ และเลือกอย่างเหมาะสม 💚"
+    "⚠️ HerbCare AI เป็นต้นแบบเพื่อการศึกษาและให้ข้อมูลเบื้องต้น "
+    "คำแนะนำในระบบไม่ใช่การวินิจฉัยหรือคำสั่งการรักษา "
+    "ผู้ที่มีโรคประจำตัวหรือใช้ยาควรปรึกษาแพทย์หรือเภสัชกร "
+    "ก่อนใช้สมุนไพรเป็นประจำ"
 )
