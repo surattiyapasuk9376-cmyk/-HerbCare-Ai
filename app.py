@@ -86,7 +86,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-img = Path("nong_baicha_mascot.png")
+img = Path("1789627040542.jpg")
 
 if img.exists():
     data = base64.b64encode(img.read_bytes()).decode()
